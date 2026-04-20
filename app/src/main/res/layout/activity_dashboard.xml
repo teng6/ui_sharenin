@@ -15,22 +15,24 @@
         android:background="#811112"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/logoCircle"
+            android:id="@+id/Iam"
             android:layout_width="65dp"
             android:layout_height="65dp"
+            android:layout_marginStart="8dp"
             android:background="@drawable/circle_bg"
             android:gravity="center"
-            android:textSize="21dp"
             android:textColor="@color/white"
+            android:textSize="21dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.538" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,20 +43,6 @@
             app:layout_constraintStart_toEndOf="@id/logoCircle"
             app:layout_constraintTop_toTopOf="@id/logoCircle">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BPSU Market"
-                android:textColor="@color/white"
-                android:textSize="19sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Student Marketplace"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
         </LinearLayout>
 
         <ImageButton
@@ -68,6 +56,34 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="149dp"
+            android:layout_height="25dp"
+            android:text="T R E Y D"
+            android:textColor="@color/white"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.386"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.283" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student Marketplace"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.343"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.666" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,18 +136,17 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="90dp"
-                        android:layout_height="120dp"
+                        android:id="@+id/buyCat"
+                        android:layout_width="163dp"
+                        android:layout_height="100dp"
                         android:layout_marginEnd="12dp"
-                        android:background="@drawable/round_cor"
-                        android:backgroundTint="@color/white"
-                        app:cardElevation="4dp"
+                        android:background="@drawable/red_roundcor"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="55dp"
-                            android:layout_height="55dp"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
                             android:background="@drawable/circle_bg"
                             android:backgroundTint="#811112"
                             android:padding="10dp"
@@ -143,20 +158,21 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="Buy/Sell"
-                            android:textSize="12sp" />
+                            android:textSize="15sp" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="90dp"
-                        android:layout_height="120dp"
+                        android:id="@+id/rentCat"
+                        android:layout_width="163dp"
+                        android:layout_height="100dp"
                         android:layout_marginEnd="12dp"
-                        android:background="@drawable/round_cor"
+                        android:background="@drawable/yellow_roundcor"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="55dp"
-                            android:layout_height="55dp"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
                             android:background="@drawable/circle_bg"
                             android:backgroundTint="#fffd8d"
                             android:padding="10dp"
@@ -168,57 +184,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="Rent"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="90dp"
-                        android:layout_height="120dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/round_cor"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="55dp"
-                            android:layout_height="55dp"
-                            android:background="@drawable/circle_bg"
-                            android:backgroundTint="#811112"
-                            android:padding="10dp"
-                            android:src="@drawable/services_icon"
-                            app:tint="#811112" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Services"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="90dp"
-                        android:layout_height="120dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/round_cor"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="55dp"
-                            android:layout_height="55dp"
-                            android:background="@drawable/circle_bg"
-                            android:backgroundTint="#228B22"
-                            android:padding="10dp"
-                            android:src="@drawable/spaces_icon"
-                            app:tint="#228B22" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Spaces"
-                            android:textSize="12sp" />
+                            android:textSize="15sp" />
                     </LinearLayout>
 
                 </LinearLayout>

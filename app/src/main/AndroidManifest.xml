@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareNinsulares">
         <activity
+            android:name=".Notification"
+            android:exported="false" />
+        <activity
             android:name=".RegisterForm"
             android:exported="false" />
         <activity

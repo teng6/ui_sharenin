@@ -31,26 +31,55 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Photos"
+                    android:text="Photos                        Category"
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/PhotoBox"
-                    android:layout_width="105dp"
-                    android:layout_height="105dp"
-                    android:background="@drawable/dashed_brdr"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/add_photo" />
+                    <LinearLayout
+                        android:id="@+id/PhotoBox"
+                        android:layout_width="105dp"
+                        android:layout_height="105dp"
+                        android:background="@drawable/dashed_brdr"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/add_photo" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add Photo" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Add Photo" />
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        app:boxCornerRadiusBottomEnd="20dp"
+                        app:boxCornerRadiusBottomStart="20dp"
+                        app:boxCornerRadiusTopEnd="20dp"
+                        app:boxCornerRadiusTopStart="20dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/categoryDropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="Select Category"
+                            android:inputType="none"
+                            android:padding="10dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                 <TextView
@@ -134,6 +163,7 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:boxCornerRadiusBottomEnd="20dp"
@@ -141,16 +171,18 @@
                     app:boxCornerRadiusTopEnd="20dp"
                     app:boxCornerRadiusTopStart="20dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
+                        android:id="@+id/locationDropdown"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:hint="e.g: Main Campus"
-                        android:inputType="text" />
+                        android:layout_height="50dp"
+                        android:hint="Select Campus"
+                        android:inputType="none"
+                        android:padding="10dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/addProductbtn"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:backgroundTint="#811112"

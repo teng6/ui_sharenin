@@ -23,21 +23,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="700dp"
+                android:layout_height="650dp"
                 android:orientation="vertical"
                 android:padding="23dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Photos"
+                    android:layout_marginBottom="10dp"
+                    android:text="Profile Photo"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/PhotoBox"
-                    android:layout_width="105dp"
-                    android:layout_height="105dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:background="@drawable/dashed_brdr"
                     android:gravity="center"
                     android:orientation="vertical">
@@ -56,9 +56,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginBottom="8dp"
-                    android:text="Title"
+                    android:text="Student Name"
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -71,8 +71,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:hint="What are you selling?"
+                        android:layout_height="50dp"
+                        android:hint="Enter Full Name"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -80,14 +80,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="Description"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Student ID"
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="85dp"
+                    android:layout_height="55dp"
                     app:boxCornerRadiusBottomEnd="20dp"
                     app:boxCornerRadiusBottomStart="20dp"
                     app:boxCornerRadiusTopEnd="20dp"
@@ -95,8 +95,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:hint="Describe your item..."
+                        android:layout_height="50dp"
+                        android:hint="e.g: 24-00000"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -104,9 +104,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="Price"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Program"
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -119,21 +119,22 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:hint="₱ 0.00"
-                        android:inputType="numberDecimal" />
+                        android:layout_height="50dp"
+                        android:hint="e.g Bachelor of Science in Computer Science"
+                        android:inputType="text"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="Location"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Campus"
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:boxCornerRadiusBottomEnd="20dp"
@@ -141,23 +142,25 @@
                     app:boxCornerRadiusTopEnd="20dp"
                     app:boxCornerRadiusTopStart="20dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
+                        android:id="@+id/campus_dropdown"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:hint="e.g: Main Campus"
-                        android:inputType="text" />
+                        android:layout_height="50dp"
+                        android:hint="Select Campus"
+                        android:inputType="none"
+                        android:padding="10dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/Registerbtn"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="9dp"
                     android:backgroundTint="#811112"
-                    android:text="Add Product"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="9dp"/>
+                    android:text="Register"
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
