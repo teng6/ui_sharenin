@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
+import com.google.android.material.button.MaterialButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -112,6 +114,14 @@ public class Notification extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh bookings when user returns to this screen
+        loadMyBookings();
+        loadReceivedBookings();
+    }
+
     public void handleBookingAction(long bookingId, String action) {
         ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
         Call<BookingResponse> call;
@@ -126,13 +136,45 @@ public class Notification extends AppCompatActivity {
             @Override
             public void onResponse(Call<BookingResponse> call, Response<BookingResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(Notification.this, "Done!", Toast.LENGTH_SHORT).show();
+                    String message = action.substring(0, 1).toUpperCase() + action.substring(1) + "ed!";
+                    Toast.makeText(Notification.this, message, Toast.LENGTH_SHORT).show();
                     loadMyBookings();
                     loadReceivedBookings();
+                    
+                    // If booking was completed, show message that listings will refresh
+                    if ("complete".equals(action)) {
+                        Toast.makeText(Notification.this, "Listing marked as sold! Refresh main screen to see updates.", Toast.LENGTH_LONG).show();
+                    }
+                } else if (response.code() == 403) {
+                    Toast.makeText(Notification.this, "Account restricted.", Toast.LENGTH_LONG).show();
+                    finish();
+                } else if (response.code() == 400) {
+                    // Try to get error details
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    Toast.makeText(Notification.this, "Invalid booking status for " + action + "\n" + errorBody, Toast.LENGTH_LONG).show();
+                } else {
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    Toast.makeText(Notification.this, "Failed to " + action + " (Code: " + response.code() + ")\n" + errorBody, Toast.LENGTH_LONG).show();
                 }
             }
             @Override
-            public void onFailure(Call<BookingResponse> call, Throwable t) { }
+            public void onFailure(Call<BookingResponse> call, Throwable t) {
+                Toast.makeText(Notification.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -175,8 +217,32 @@ public class Notification extends AppCompatActivity {
             holder.tvStatus.setText(booking.status != null ? booking.status : "");
             holder.tvMessage.setText(booking.message != null ? booking.message : "");
 
+            // Set status color based on booking status
+            String status = booking.status != null ? booking.status : "";
+            switch (status) {
+                case "PENDING":
+                    holder.tvStatus.setBackgroundColor(0xFFFF9800); // Orange
+                    break;
+                case "ACCEPTED":
+                    holder.tvStatus.setBackgroundColor(0xFF4CAF50); // Green
+                    break;
+                case "COMPLETED":
+                    holder.tvStatus.setBackgroundColor(0xFF2196F3); // Blue
+                    break;
+                case "REJECTED":
+                    holder.tvStatus.setBackgroundColor(0xFFF44336); // Red
+                    break;
+                case "CANCELLED":
+                    holder.tvStatus.setBackgroundColor(0xFF9E9E9E); // Gray
+                    break;
+                default:
+                    holder.tvStatus.setBackgroundColor(0xFF811112); // Default red
+                    break;
+            }
+
             if (isReceived && "PENDING".equals(booking.status)) {
-                holder.tvOtherParty.setText("From: " + (booking.buyerName != null ? booking.buyerName : ""));
+                // SELLER view: You received a booking request
+                holder.tvOtherParty.setText("Buyer: " + (booking.buyerName != null ? booking.buyerName : ""));
                 holder.btnPrimary.setVisibility(View.VISIBLE);
                 holder.btnSecondary.setVisibility(View.VISIBLE);
                 holder.btnPrimary.setText("Accept");
@@ -184,16 +250,18 @@ public class Notification extends AppCompatActivity {
                 holder.btnPrimary.setOnClickListener(v -> listener.onAction(booking.id, "accept"));
                 holder.btnSecondary.setOnClickListener(v -> listener.onAction(booking.id, "reject"));
             } else if (!isReceived && "PENDING".equals(booking.status)) {
+                // BUYER view: Your booking request is pending
                 holder.tvOtherParty.setText("Seller: " + (booking.sellerName != null ? booking.sellerName : ""));
                 holder.btnPrimary.setVisibility(View.VISIBLE);
                 holder.btnSecondary.setVisibility(View.GONE);
                 holder.btnPrimary.setText("Cancel");
                 holder.btnPrimary.setOnClickListener(v -> listener.onAction(booking.id, "cancel"));
-            } else if ("ACCEPTED".equals(booking.status) && !isReceived) {
-                holder.tvOtherParty.setText("Seller: " + (booking.sellerName != null ? booking.sellerName : ""));
+            } else if ("ACCEPTED".equals(booking.status) && isReceived) {
+                // SELLER view: You accepted this booking, now complete it
+                holder.tvOtherParty.setText("Buyer: " + (booking.buyerName != null ? booking.buyerName : ""));
                 holder.btnPrimary.setVisibility(View.VISIBLE);
                 holder.btnSecondary.setVisibility(View.GONE);
-                holder.btnPrimary.setText("Mark Complete");
+                holder.btnPrimary.setText("Complete");
                 holder.btnPrimary.setOnClickListener(v -> listener.onAction(booking.id, "complete"));
             } else {
                 holder.tvOtherParty.setText(isReceived

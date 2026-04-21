@@ -8,6 +8,7 @@ public class UpdateListingRequest {
     public BigDecimal price;
     public String category;
     public String type;
+    public String campus;
     public String status;
     public String imageUrl;
 }

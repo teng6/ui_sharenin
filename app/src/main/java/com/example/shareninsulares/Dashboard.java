@@ -13,8 +13,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.ImageView;
+import android.widget.ImageButton;
 
 import com.example.shareninsulares.model.ListingResponse;
+import com.example.shareninsulares.model.BookingResponse;
 import com.example.shareninsulares.network.ApiClient;
 import com.example.shareninsulares.network.ApiService;
 import com.example.shareninsulares.network.SessionManager;
@@ -31,6 +34,7 @@ public class Dashboard extends AppCompatActivity {
 
     private SessionManager sessionManager;
     private LinearLayout buyCat, rentCat;
+    private ImageView btnRefresh;
     private ImageButton btnNotif;
     private BottomNavigationView bottomNav;
     private RecyclerView rvListings;
@@ -58,6 +62,7 @@ public class Dashboard extends AppCompatActivity {
 
         buyCat    = findViewById(R.id.buyCat);
         rentCat   = findViewById(R.id.rentCat);
+        btnRefresh = findViewById(R.id.btnRefresh);
         btnNotif  = findViewById(R.id.btnNotif);
         bottomNav = findViewById(R.id.bottom_navigation);
         rvListings = findViewById(R.id.rvListings);
@@ -72,11 +77,46 @@ public class Dashboard extends AppCompatActivity {
 
         buyCat.setOnClickListener(v -> loadListings(null, "SELL"));
         rentCat.setOnClickListener(v -> loadListings(null, "RENT"));
+        btnRefresh.setOnClickListener(v -> {
+            loadListings(null, null);
+            Toast.makeText(this, "Listings refreshed", Toast.LENGTH_SHORT).show();
+        });
         btnNotif.setOnClickListener(v ->
                 startActivity(new Intent(this, Notification.class)));
+        
+        // Add refresh on resume
+        // This ensures listings are refreshed when user returns to this screen
 
         setupBottomNav();
         loadListings(null, null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh listings when user returns to this screen
+        loadListings(null, null);
+    }
+
+    private void loadUserBookings() {
+        ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
+        api.getMyBookings().enqueue(new Callback<List<BookingResponse>>() {
+            @Override
+            public void onResponse(Call<List<BookingResponse>> call, Response<List<BookingResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Long> bookedIds = new ArrayList<>();
+                    for (BookingResponse booking : response.body()) {
+                        bookedIds.add(booking.listingId);
+                    }
+                    listingAdapter.setBookedListings(bookedIds);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<BookingResponse>> call, Throwable t) {
+                // Ignore booking load failure, just don't show booked status
+            }
+        });
     }
 
     private void loadListings(String campus, String category) {
@@ -86,6 +126,8 @@ public class Dashboard extends AppCompatActivity {
             public void onResponse(Call<List<ListingResponse>> call, Response<List<ListingResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     listingAdapter.updateListings(response.body());
+                    // Load user's bookings to show booking status
+                    loadUserBookings();
                 } else if (response.code() == 403) {
                     Toast.makeText(Dashboard.this, "Account restricted.", Toast.LENGTH_LONG).show();
                     logout();

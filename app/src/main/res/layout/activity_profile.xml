@@ -266,6 +266,20 @@
             app:iconTint="#228B22"
             app:iconSize="24dp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:background="#811112"
+            android:text="Logout"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:icon="@drawable/back_icon"
+            app:iconTint="@color/white"
+            app:iconSize="24dp" />
+
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

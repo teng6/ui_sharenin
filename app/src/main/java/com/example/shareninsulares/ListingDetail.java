@@ -3,6 +3,7 @@ package com.example.shareninsulares;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class ListingDetail extends AppCompatActivity {
     private TextView tvTitle, tvDescription, tvPrice, tvType, tvCategory, tvCampus, tvSellerName;
     private ImageView ivImage;
     private Button btnBook, btnMessage;
+    private ImageButton btnNotif, btnLogout;
     private BottomNavigationView bottomNav;
     private long listingId;
     private ListingResponse currentListing;
@@ -68,6 +70,8 @@ public class ListingDetail extends AppCompatActivity {
         ivImage = findViewById(R.id.ivDetailImage);
         btnBook = findViewById(R.id.btnBook);
         btnMessage = findViewById(R.id.btnMessage);
+        btnNotif = findViewById(R.id.btnNotif);
+        btnLogout = findViewById(R.id.btnLogout);
         bottomNav = findViewById(R.id.bottom_navigation);
     }
 
@@ -113,6 +117,7 @@ public class ListingDetail extends AppCompatActivity {
 
         btnBook.setOnClickListener(v -> bookListing());
         btnMessage.setOnClickListener(v -> messageSeller());
+        btnLogout.setOnClickListener(v -> logout());
     }
 
     private void bookListing() {

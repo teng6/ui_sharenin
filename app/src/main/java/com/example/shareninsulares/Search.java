@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareninsulares.model.ListingResponse;
+import com.example.shareninsulares.model.BookingResponse;
 import com.example.shareninsulares.network.ApiClient;
 import com.example.shareninsulares.network.ApiService;
 import com.example.shareninsulares.network.SessionManager;
@@ -56,9 +57,11 @@ public class Search extends AppCompatActivity {
 
         // Set up RecyclerView
         rvResults.setLayoutManager(new LinearLayoutManager(this));
-        searchAdapter = new ListingAdapter(new ArrayList<>(), listing ->
-                Toast.makeText(this, listing.title, Toast.LENGTH_SHORT).show()
-        );
+        searchAdapter = new ListingAdapter(new ArrayList<>(), listing -> {
+            Intent intent = new Intent(Search.this, ListingDetail.class);
+            intent.putExtra("listing_id", listing.id);
+            startActivity(intent);
+        });
         rvResults.setAdapter(searchAdapter);
 
         setupBottomNav();
@@ -75,6 +78,34 @@ public class Search extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh listings when user returns to this screen
+        loadListings(null, null);
+    }
+
+    private void loadUserBookings() {
+        ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
+        api.getMyBookings().enqueue(new Callback<List<BookingResponse>>() {
+            @Override
+            public void onResponse(Call<List<BookingResponse>> call, Response<List<BookingResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Long> bookedIds = new ArrayList<>();
+                    for (BookingResponse booking : response.body()) {
+                        bookedIds.add(booking.listingId);
+                    }
+                    searchAdapter.setBookedListings(bookedIds);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<BookingResponse>> call, Throwable t) {
+                // Ignore booking load failure, just don't show booked status
+            }
+        });
+    }
+
     private void loadListings(String campus, String category) {
         ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
         api.getAllListings(campus, category).enqueue(new Callback<List<ListingResponse>>() {
@@ -82,6 +113,8 @@ public class Search extends AppCompatActivity {
             public void onResponse(Call<List<ListingResponse>> call, Response<List<ListingResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     searchAdapter.updateListings(response.body());
+                    // Load user's bookings to show booking status
+                    loadUserBookings();
                 }
             }
 
@@ -94,6 +127,7 @@ public class Search extends AppCompatActivity {
     }
 
     private void setupBottomNav() {
+        bottomNav.setSelectedItemId(R.id.nav_search);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {

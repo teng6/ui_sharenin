@@ -80,6 +80,19 @@
                     android:textSize="11sp"
                     android:text="SELL" />
 
+                <TextView
+                    android:id="@+id/tvListingStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/round_cor"
+                    android:backgroundTint="#4CAF50"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:text="ACTIVE" />
+
             </LinearLayout>
 
             <TextView

@@ -46,6 +46,13 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
+    // Image Loading
+    implementation("com.squareup.picasso:picasso:2.8")
+    
+    // Firebase for Chat
+    implementation("com.google.firebase:firebase-firestore:24.10.3")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
+
     // ─── Testing ─────────────────────────────────────────────────────────────
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

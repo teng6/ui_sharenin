@@ -53,15 +53,27 @@
             android:textColor="#FFCCCC"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnNotif"
+            app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
             app:layout_constraintStart_toEndOf="@+id/Iam"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <ImageView
+            android:id="@+id/btnRefresh"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/buy_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnNotif"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/btnNotif"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/circle_bg"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Notifications"
             android:src="@drawable/notif_icon"
             app:layout_constraintBottom_toBottomOf="parent"

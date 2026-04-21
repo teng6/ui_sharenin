@@ -36,6 +36,15 @@
             android:name=".Dashboard"
             android:exported="false" />
         <activity
+            android:name=".ListingDetail"
+            android:exported="false" />
+        <activity
+            android:name=".MyListings"
+            android:exported="false" />
+        <activity
+            android:name=".EditListing"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

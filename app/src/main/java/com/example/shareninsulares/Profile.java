@@ -26,7 +26,7 @@ public class Profile extends AppCompatActivity {
 
     private TextView tvName, tvProgram, tvCampus, tvStudentId;
     private TextView tvListingCount, tvRatingScore, tvWalletBalance;
-    private MaterialButton btnMyListing, btnRatings, btnWallet;
+    private MaterialButton btnMyListing, btnRatings, btnWallet, btnLogout;
     private BottomNavigationView bottomNav;
     private SessionManager sessionManager;
 
@@ -55,14 +55,18 @@ public class Profile extends AppCompatActivity {
         btnMyListing = findViewById(R.id.MyListingButton);
         btnRatings   = findViewById(R.id.RatingsButton);
         btnWallet    = findViewById(R.id.WalletButton);
+        btnLogout    = findViewById(R.id.btnLogout);
         bottomNav    = findViewById(R.id.bottom_navigation);
 
-        btnMyListing.setOnClickListener(v ->
-                Toast.makeText(this, "My Listings coming soon", Toast.LENGTH_SHORT).show());
+        btnMyListing.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MyListings.class);
+            startActivity(intent);
+        });
         btnRatings.setOnClickListener(v ->
                 Toast.makeText(this, "Ratings coming soon", Toast.LENGTH_SHORT).show());
         btnWallet.setOnClickListener(v ->
                 Toast.makeText(this, "Wallet coming soon", Toast.LENGTH_SHORT).show());
+        btnLogout.setOnClickListener(v -> logout());
 
         setupBottomNav();
         loadProfile();
@@ -118,5 +122,11 @@ public class Profile extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void logout() {
+        sessionManager.clearSession();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }
