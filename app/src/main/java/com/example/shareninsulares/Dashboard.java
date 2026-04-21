@@ -126,6 +126,7 @@ public class Dashboard extends AppCompatActivity {
             public void onResponse(Call<List<ListingResponse>> call, Response<List<ListingResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     listingAdapter.updateListings(response.body());
+                    listingAdapter.notifyDataSetChanged();
                     // Load user's bookings to show booking status
                     loadUserBookings();
                 } else if (response.code() == 403) {

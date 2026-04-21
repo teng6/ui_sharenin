@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,9 +32,12 @@ public class Post extends AppCompatActivity {
 
     private TextInputEditText etTitle, etDescription, etPrice;
     private AutoCompleteTextView categoryDropdown, locationDropdown;
-    private Button btnPost;
+    private TextInputEditText etType, etCategory, etCampus;
+    private Button btnPost, btnUploadImage;
+    private ImageView ivImagePreview;
     private BottomNavigationView bottomNav;
     private SessionManager sessionManager;
+    private String selectedImagePath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class Post extends AppCompatActivity {
         categoryDropdown = findViewById(R.id.categoryDropdown);
         locationDropdown = findViewById(R.id.locationDropdown);
         btnPost          = findViewById(R.id.addProductbtn);
+        btnUploadImage   = findViewById(R.id.btnUploadImage);
+        ivImagePreview   = findViewById(R.id.ivImagePreview);
         bottomNav        = findViewById(R.id.bottom_navigation);
         etTitle          = findViewById(R.id.etTitle);
         etDescription    = findViewById(R.id.etDescription);
@@ -74,8 +80,13 @@ public class Post extends AppCompatActivity {
         }
 
         btnPost.setOnClickListener(v -> submitListing());
-
+        btnUploadImage.setOnClickListener(v -> selectImage());
         setupBottomNav();
+    }
+
+    private void selectImage() {
+        // For now, show a toast - you can integrate image picker later
+        Toast.makeText(this, "Image upload feature coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void submitListing() {

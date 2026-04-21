@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,6 +65,20 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHold
         holder.tvType.setText(listing.type != null ? listing.type : "");
         holder.tvSellerName.setText(listing.sellerName != null ? "by " + listing.sellerName : "");
 
+        // Set listing image if available
+        if (listing.imageUrl != null && !listing.imageUrl.isEmpty()) {
+            // Load image using Glide or similar library
+            try {
+                // For now, use a simple approach - you can integrate Glide later
+                holder.ivListingImage.setVisibility(View.VISIBLE);
+                // You can add image loading library here
+            } catch (Exception e) {
+                holder.ivListingImage.setVisibility(View.GONE);
+            }
+        } else {
+            holder.ivListingImage.setVisibility(View.GONE);
+        }
+
         // Check if user has already booked this listing
         boolean isBookedByUser = bookedListingIds.contains(listing.id);
         
@@ -111,6 +126,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDescription, tvPrice, tvType, tvSellerName, tvStatus;
+        ImageView ivListingImage;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +136,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHold
             tvType        = itemView.findViewById(R.id.tvListingType);
             tvSellerName  = itemView.findViewById(R.id.tvSellerName);
             tvStatus      = itemView.findViewById(R.id.tvListingStatus);
+            ivListingImage = itemView.findViewById(R.id.ivListingImage);
         }
     }
 }

@@ -34,10 +34,7 @@ public class RegisterForm extends AppCompatActivity {
     private AutoCompleteTextView campusDropdown;
     private Button btnRegister;
     private SessionManager sessionManager;
-
-    // These will work once you add IDs to the TextInputEditText views in the XML
-    // (see instructions at bottom of this file)
-    private TextInputEditText etFullName, etStudentId, etPassword;
+    private TextInputEditText etFullName, etStudentId, etPassword, etProgram;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +54,11 @@ public class RegisterForm extends AppCompatActivity {
         campusDropdown = findViewById(R.id.campus_dropdown);
         btnRegister    = findViewById(R.id.Registerbtn);
 
-        // These IDs need to be added to your XML (see instructions below)
+        // These IDs exist in your XML
         etFullName  = findViewById(R.id.etFullName);
         etStudentId = findViewById(R.id.etStudentId);
         etPassword  = findViewById(R.id.etPassword);
+        etProgram   = findViewById(R.id.etProgram);
 
         String[] campusOptions = {"Main Campus", "Balanga Campus"};
         campusDropdown.setAdapter(new ArrayAdapter<>(
@@ -73,13 +71,14 @@ public class RegisterForm extends AppCompatActivity {
         String fullName  = etFullName  != null ? etFullName.getText().toString().trim()  : "";
         String studentId = etStudentId != null ? etStudentId.getText().toString().trim() : "";
         String password  = etPassword  != null ? etPassword.getText().toString().trim()  : "";
+        String program   = etProgram   != null ? etProgram.getText().toString().trim()   : "";
         String campus    = campusDropdown.getText().toString().trim();
 
         // Email is auto-generated from studentId for BPSU pattern,
         // or you can add an email field. For now we use studentId@bpsu.edu.ph
         String email = studentId + "@bpsu.edu.ph";
 
-        if (fullName.isEmpty() || studentId.isEmpty() || password.isEmpty() || campus.isEmpty()) {
+        if (fullName.isEmpty() || studentId.isEmpty() || password.isEmpty() || campus.isEmpty() || program.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -87,7 +86,7 @@ public class RegisterForm extends AppCompatActivity {
         btnRegister.setEnabled(false);
 
         ApiService api = ApiClient.getPublicClient().create(ApiService.class);
-        api.register(new RegisterRequest(studentId, email, fullName, password, campus))
+        api.register(new RegisterRequest(studentId, email, fullName, password, program, campus))
                 .enqueue(new Callback<AuthResponse>() {
                     @Override
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
