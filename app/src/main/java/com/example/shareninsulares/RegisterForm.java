@@ -1,11 +1,17 @@
 package com.example.shareninsulares;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +41,9 @@ public class RegisterForm extends AppCompatActivity {
     private Button btnRegister;
     private SessionManager sessionManager;
     private TextInputEditText etFullName, etStudentId, etPassword, etProgram;
+    private ImageView ivProfileImage;
+    private Uri selectedProfileImageUri;
+    private ActivityResultLauncher<Intent> profileImagePickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,19 @@ public class RegisterForm extends AppCompatActivity {
         setContentView(R.layout.activity_register_form);
 
         sessionManager = new SessionManager(this);
+
+        // Initialize profile image picker launcher
+        profileImagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        selectedProfileImageUri = result.getData().getData();
+                        if (selectedProfileImageUri != null && ivProfileImage != null) {
+                            ivProfileImage.setImageURI(selectedProfileImageUri);
+                            Toast.makeText(this, "Profile image selected!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -59,6 +81,12 @@ public class RegisterForm extends AppCompatActivity {
         etStudentId = findViewById(R.id.etStudentId);
         etPassword  = findViewById(R.id.etPassword);
         etProgram   = findViewById(R.id.etProgram);
+
+        // Profile photo box click handler
+        ivProfileImage = findViewById(R.id.PhotoBox);
+        if (ivProfileImage != null) {
+            ivProfileImage.setOnClickListener(v -> selectProfileImage());
+        }
 
         String[] campusOptions = {"Main Campus", "Balanga Campus"};
         campusDropdown.setAdapter(new ArrayAdapter<>(
@@ -114,6 +142,11 @@ public class RegisterForm extends AppCompatActivity {
                                 "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void selectProfileImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        profileImagePickerLauncher.launch(intent);
     }
 }
 

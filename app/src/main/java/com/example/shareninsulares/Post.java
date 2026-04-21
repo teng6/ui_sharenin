@@ -1,18 +1,24 @@
 package com.example.shareninsulares;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import androidx.activity.EdgeToEdge;
 
 import com.example.shareninsulares.model.CreateListingRequest;
 import com.example.shareninsulares.model.ListingResponse;
@@ -22,8 +28,17 @@ import com.example.shareninsulares.network.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,6 +53,10 @@ public class Post extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private SessionManager sessionManager;
     private String selectedImagePath = "";
+    private Uri selectedImageUri;
+
+    // Image picker launcher
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +65,21 @@ public class Post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         sessionManager = new SessionManager(this);
+
+        // Initialize image picker launcher
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                        if (selectedImageUri != null) {
+                            ivImagePreview.setImageURI(selectedImageUri);
+                            ivImagePreview.setVisibility(View.VISIBLE);
+                            selectedImagePath = selectedImageUri.toString();
+                            Toast.makeText(this, "Image selected successfully!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -85,8 +119,64 @@ public class Post extends AppCompatActivity {
     }
 
     private void selectImage() {
-        // For now, show a toast - you can integrate image picker later
-        Toast.makeText(this, "Image upload feature coming soon!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imagePickerLauncher.launch(intent);
+    }
+
+    private void uploadImage(Uri imageUri, ImageUploadCallback callback) {
+        try {
+            // Check if we can read the image
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            if (inputStream == null) {
+                callback.onFailure("Cannot read image file");
+                return;
+            }
+            
+            File tempFile = new File(getCacheDir(), "temp_image_" + System.currentTimeMillis() + ".jpg");
+            
+            OutputStream outputStream = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            inputStream.close();
+            outputStream.close();
+
+            // Create request body with proper media type
+            MediaType mediaType = MediaType.parse("image/jpeg");
+            RequestBody requestFile = RequestBody.create(tempFile, mediaType);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", tempFile.getName(), requestFile);
+
+            // For now, use the actual image URI as the "URL"
+            // In a real app, this would upload to a server and return a URL
+            new Thread(() -> {
+                try {
+                    // Simulate upload delay
+                    Thread.sleep(500);
+                    
+                    // Use the actual image URI as the "URL"
+                    String imageUrl = imageUri.toString();
+                    
+                    // Clean up temp file
+                    tempFile.delete();
+                    
+                    // Return success on main thread
+                    runOnUiThread(() -> callback.onSuccess(imageUrl));
+                    
+                } catch (Exception e) {
+                    tempFile.delete();
+                    runOnUiThread(() -> callback.onFailure("Upload failed: " + e.getMessage()));
+                }
+            }).start();
+        } catch (IOException e) {
+            callback.onFailure("Error reading image: " + e.getMessage());
+        }
+    }
+
+    private interface ImageUploadCallback {
+        void onSuccess(String imageUrl);
+        void onFailure(String error);
     }
 
     private void submitListing() {
@@ -108,33 +198,63 @@ public class Post extends AppCompatActivity {
         try {
             price = new BigDecimal(priceStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Enter a valid price", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid price format", Toast.LENGTH_SHORT).show();
             return;
         }
 
         btnPost.setEnabled(false);
 
-        ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
-        api.createListing(new CreateListingRequest(title, description, price, "General", type, null))
-                .enqueue(new Callback<ListingResponse>() {
-                    @Override
-                    public void onResponse(Call<ListingResponse> call, Response<ListingResponse> response) {
-                        btnPost.setEnabled(true);
-                        if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(Post.this, "Listing posted!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(Post.this, "Failed to post listing", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        // Make variables effectively final for callback
+        final String finalTitle = title;
+        final String finalDescription = description;
+        final BigDecimal finalPrice = price;
+        final String finalType = type;
+        final String finalCampus = campus;
 
-                    @Override
-                    public void onFailure(Call<ListingResponse> call, Throwable t) {
-                        btnPost.setEnabled(true);
-                        Toast.makeText(Post.this,
-                                "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        // If there's an image, upload it first
+        if (selectedImageUri != null) {
+            uploadImage(selectedImageUri, new ImageUploadCallback() {
+                @Override
+                public void onSuccess(String imageUrl) {
+                    createListing(finalTitle, finalDescription, finalPrice, finalType, finalCampus, imageUrl);
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    btnPost.setEnabled(true);
+                    // Show error and offer to continue without image
+                    Toast.makeText(Post.this, "Image upload failed: " + error, Toast.LENGTH_LONG).show();
+                    // Continue with listing creation without image
+                    createListing(finalTitle, finalDescription, finalPrice, finalType, finalCampus, null);
+                }
+            });
+        } else {
+            // Create listing without image
+            createListing(finalTitle, finalDescription, finalPrice, finalType, finalCampus, null);
+        }
+    }
+
+    private void createListing(String title, String description, BigDecimal price, String type, String campus, String imageUrl) {
+        CreateListingRequest request = new CreateListingRequest(title, description, price, type, campus, imageUrl);
+        ApiService api = ApiClient.getClient(sessionManager.getToken()).create(ApiService.class);
+        api.createListing(request).enqueue(new Callback<ListingResponse>() {
+            @Override
+            public void onResponse(Call<ListingResponse> call, Response<ListingResponse> response) {
+                btnPost.setEnabled(true);
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(Post.this, "Listing created successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(Post.this, "Failed to create listing", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ListingResponse> call, Throwable t) {
+                btnPost.setEnabled(true);
+                Toast.makeText(Post.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupBottomNav() {

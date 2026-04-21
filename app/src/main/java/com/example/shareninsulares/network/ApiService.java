@@ -13,15 +13,19 @@ import com.example.shareninsulares.model.UpdateListingRequest;
 import com.example.shareninsulares.model.UserResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
+import okhttp3.MultipartBody;
 
 public interface ApiService {
 
@@ -83,6 +87,11 @@ public interface ApiService {
     // ─── RATINGS ─────────────────────────────────────────────────────────────
     @POST("api/ratings")
     Call<RatingResponse> createRating(@Body CreateRatingRequest request);
+
+    // ─── UPLOAD ──────────────────────────────────────────────────────────────
+    @Multipart
+    @POST("api/upload")
+    Call<Map<String, String>> uploadImage(@Part MultipartBody.Part image);
 
     @GET("api/ratings/user/{userId}")
     Call<List<RatingResponse>> getRatingsForUser(@Path("userId") long userId);

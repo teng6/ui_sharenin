@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareninsulares.model.ListingResponse;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -67,11 +68,20 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHold
 
         // Set listing image if available
         if (listing.imageUrl != null && !listing.imageUrl.isEmpty()) {
-            // Load image using Glide or similar library
             try {
-                // For now, use a simple approach - you can integrate Glide later
                 holder.ivListingImage.setVisibility(View.VISIBLE);
-                // You can add image loading library here
+                // Check if it's a local URI (content://) or network URL
+                if (listing.imageUrl.startsWith("content://") || listing.imageUrl.startsWith("file://")) {
+                    // Load local image URI
+                    holder.ivListingImage.setImageURI(android.net.Uri.parse(listing.imageUrl));
+                } else {
+                    // Load network image URL
+                    Picasso.get()
+                        .load(listing.imageUrl)
+                        .placeholder(com.example.shareninsulares.R.drawable.buy_icon)
+                        .error(com.example.shareninsulares.R.drawable.buy_icon)
+                        .into(holder.ivListingImage);
+                }
             } catch (Exception e) {
                 holder.ivListingImage.setVisibility(View.GONE);
             }
